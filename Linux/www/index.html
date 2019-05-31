@@ -1,0 +1,160 @@
+<html>
+	<head>
+		<title>Easy as Do_Re_Mi</title>
+		<script src="jquery.min.js"></script>
+		<meta charset="UTF-8"> 
+	</head>
+	<body style="font-family:arial;">
+		<div style="text-align:center">
+			<h1>
+				<div class="TituloBlock" id="info">
+					<font face="impact" color="#38d11c" SIZE=8>EASY</font>
+					<font face="impact" color="#000000" SIZE=8>AS</font>
+					<font face="impact" color="#33ccff" SIZE=8>Do</font>
+					<font face="impact" color="#999966" SIZE=8>-</font>
+					<font face="impact" color="#ffff00" SIZE=8>Re</font>
+					<font face="impact" color="#999966" SIZE=8>-</font>
+					<font face="impact" color="#ff0000" SIZE=8>Mi</font>
+				</div>
+			</h1>
+			<form method=get id="form-search">
+				<button id="buttonComenzar"><font face="impact" color="#000000" SIZE=6>Comenzar</font></button>
+			</form>
+			<span id="bocinaSpan">
+				<button id="btnBocina" style="display:none" onclick="reproducirTonos()"></button>
+			</span>
+			<div class="blockContent">
+				<span id="NotasAtocar" style="display:none"><h4><font face="impact" color="#000000">Notas a tocar</font></h4></span>
+				<span id="Info">
+					<div align="justify">
+						<font face="impact" color="#000000" SIZE=3>
+							Este programa fue desarrollado por alumnos de ESCOM. </br>
+							Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. Fue popularizado en los 60s con la creación de las hojas "Letraset", las cuales contenian pasajes de Lorem Ipsum, y más recientemente con software de autoedición, como por ejemplo Aldus PageMaker, el cual incluye versiones de Lorem Ipsum.
+						</font>
+					</div>
+				</span>
+				<div class="block" id="search-res"></div>
+			</div>
+		</div>
+	</body>
+</html>
+
+<script>
+
+	var newDataTones;
+
+	var btnBocina = document.getElementById("btnBocina");
+    btnBocina.innerHTML = '<img src="images/bocina.jpg" width=\"45\" height=\"45\" />';
+
+	function showMySpan() {
+		var mySpan = document.getElementById('NotasAtocar');
+		mySpan.style.display = "";
+		var mySpanInfo = document.getElementById('Info');
+		mySpanInfo.style.display = "none";
+		var mySpanBocina = document.getElementById('btnBocina');
+		mySpanBocina.style.display = "";
+	}
+
+	function reproducirTonos(){
+		console.log(newDataTones);
+		let i = 0;
+		var audio = new Audio('Tonos/Flauta/do.wav');
+		audio.play();
+		audio.onended = function() {
+		    if(i < newDataTones.length){
+		    	i++;
+		    	//console.log('Tonos/Flauta/'+newDataTones[i].toLowerCase()+'.wav');
+		        audio = new Audio('Tonos/Flauta/'+newDataTones[i].toLowerCase()+'.wav');
+		        audio.play();
+		    }
+		};
+	}
+
+	$("#search-res").hide();
+	$('#form-search').submit(function(){
+		$("#search-res").show();
+		$("#search-res").html("<img src='load.gif' width=50/>");
+		$.ajax({
+			type: "POST",
+			url: "/search",
+			data:{
+				query:$("#search").val()
+			},
+			success: function(data){
+
+				showMySpan();
+
+				newData = data.split("&nbsp;").slice(0,-1);
+
+				newDataTones = data.split("&nbsp;").slice(0,-1);
+
+				console.log(newData);
+
+				newData.unshift("<img src=\"imagesNotes/Penta.jpg\" width=\"55\" height=\"55\" />");
+
+				for(let i=0;i<newData.length;i++){
+					if(newData[i] === "Do"){
+						newData[i] = "<img src=\"imagesNotes/Do.jpg\" width=\"55\" height=\"55\" />";
+					}else if(newData[i] === "Re"){
+						newData[i] = "<img src=\"imagesNotes/Re.jpg\" width=\"55\" height=\"55\" />";
+					}else if(newData[i] === "Mi"){
+						newData[i] = "<img src=\"imagesNotes/Mi.jpg\" width=\"55\" height=\"55\" />";
+					}else if(newData[i] === "Fa"){
+						newData[i] = "<img src=\"imagesNotes/Fa.jpg\" width=\"55\" height=\"55\" />";
+					}else if(newData[i] === "Sol"){
+						newData[i] = "<img src=\"imagesNotes/Sol.jpg\" width=\"55\" height=\"55\" />";
+					}else if(newData[i] === "La"){
+						newData[i] = "<img src=\"imagesNotes/La.jpg\" width=\"55\" height=\"55\" />";
+					}else if(newData[i] === "Si"){
+						newData[i] = "<img src=\"imagesNotes/Si.jpg\" width=\"55\" height=\"55\" />";
+					}
+				}
+
+				console.log(newData);
+
+				$("#search-res").html(newData);
+			}
+		});
+		return false;
+	});
+</script>
+
+<style>
+	h1,h2,h4{
+		color:#ffffff;
+	}
+	body{
+		background-image: url("/images/wallpaper.jpg");
+	}
+	.block{
+		padding:10px;
+		margin-left:0%;
+		margin-right:0%;
+		margin-bottom: 5%;
+		border-radius:10px;
+	}
+	.blockContent{
+		background-color:rgb(169, 170, 145);
+		opacity:0.8;
+		filter:alpha(opacity=60); /* IE < 9.0 */
+		padding:10px;
+		margin-left:25%;
+		margin-right:25%;
+		border-radius:10px;
+	}
+	.TituloBlock{
+		background-color:rgb(224, 229, 235);
+		opacity:1;
+		filter:alpha(opacity=60); /* IE < 9.0 */
+		padding:20px;
+		margin-left:25%;
+		margin-right:25%;
+		border-radius:10px;
+	}
+	#search{
+		height:40px;
+		font-size:20px;
+		width:300px;
+		border-radius:10px;
+	}
+</style>
